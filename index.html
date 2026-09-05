@@ -13,9 +13,7 @@
 
   <!-- A-Frame 1.6.0 -->
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-  <!-- AR.js 3.4.7 para A-Frame / marcador -->
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/three.js/build/ar-threex.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/aframe/build/aframe-ar.js"></script>
+  <!-- AR 3.4.7: A-Frame + Marker Tracking -->
 
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -212,7 +210,7 @@
 
         <div class="experience-panel" id="arPanel">
           <div class="ar-copy">
-            <span class="pill">AR.JS 3.4.7 • MARCADOR HIRO</span>
+            <span class="pill">AR 3.4.7 • MARCADOR HIRO</span>
             <h3>Apunta al marcador y descubre una pieza</h3>
             <p>
               Imprime o abre el marcador Hiro en otra pantalla. Después pulsa
@@ -224,18 +222,16 @@
               <div><b>2</b><span>Acepta el permiso</span></div>
               <div><b>3</b><span>Enfoca el marcador</span></div>
             </div>
-            <button id="startArBtn" class="btn btn-primary">📷 Activar cámara</button>
-            <button id="stopArBtn" class="btn btn-soft hidden">✕ Cerrar cámara</button>
             <p class="camera-note">La RA requiere HTTPS o un entorno local seguro. GitHub Pages funciona con HTTPS.</p>
           </div>
 
-          <div class="ar-stage" id="arStage">
+          <div class="ar-stage ar-launch-stage" id="arStage">
             <div id="arPlaceholder" class="ar-placeholder">
               <div class="marker-icon">◎</div>
-              <h4>Experiencia AR lista</h4>
-              <p>La cámara aparecerá aquí cuando la actives.</p>
+              <h4>Visor AR independiente</h4>
+              <p>La cámara <strong>NO se activa al abrir la aplicación</strong>. Solo se abrirá al pulsar el botón.</p>
+              <button id="startArBtn" class="btn btn-primary" type="button">📷 Abrir cámara AR</button>
             </div>
-            <div id="arContainer" class="ar-container hidden"></div>
           </div>
         </div>
       </div>
@@ -256,7 +252,7 @@
   <footer>
     <div class="section-shell footer-inner">
       <div><strong>CompuLab 360</strong><span>Laboratorio interactivo del computador</span></div>
-      <span>HTML5 • CSS3 • JavaScript • A-Frame 1.6.0 • AR.js 3.4.7</span>
+      <span>HTML5 • CSS3 • JavaScript • A-Frame 1.6.0 • AR 3.4.7</span>
     </div>
   </footer>
 
@@ -278,7 +274,6 @@
   <script src="js/classification.js"></script>
   <script src="js/quiz.js"></script>
   <script src="js/vr.js"></script>
-  <script src="js/ar.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

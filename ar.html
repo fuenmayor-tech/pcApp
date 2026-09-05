@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#11162e">
+<title>CompuLab 360 — Realidad Aumentada</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050817;font-family:Arial,sans-serif}
+body{position:relative}.topbar{position:fixed;top:0;left:0;right:0;height:58px;z-index:10000;display:flex;align-items:center;justify-content:space-between;padding:0 14px;color:#fff;background:rgba(17,22,46,.9);backdrop-filter:blur(10px)}
+.topbar strong{font-size:16px}.exit,.activate{border:0;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}.exit{background:#fff;color:#222844}.activate{background:#6c5ce7;color:#fff;font-size:16px}
+.loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(5,8,23,.96);color:#fff;text-align:center}.loader.hide{opacity:0;pointer-events:none;transition:opacity .25s}.card{width:min(430px,100%);padding:28px;border-radius:22px;background:#11162e;border:1px solid #454c70}.icon{font-size:52px;margin-bottom:10px}.card strong{display:block;font-size:19px;margin-bottom:9px}.card p{color:#b9c1d9;font-size:14px;line-height:1.55;margin:0 0 18px}.error{color:#ffb4b4!important}.status{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:9998;max-width:calc(100% - 30px);padding:11px 16px;border-radius:14px;color:#fff;background:rgba(17,22,46,.92);border:1px solid #454c70;font-weight:800;text-align:center}.status.found{background:rgba(24,116,88,.95);border-color:#36c89d}
+.a-canvas{position:fixed!important;inset:0!important;z-index:1!important}video{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;z-index:0!important}
+</style>
+</head>
+<body>
+<div class="topbar"><strong>📱 CompuLab 360 — AR</strong><button class="exit" id="exitBtn">✕ Salir</button></div>
+<div class="loader" id="loader"><div class="card"><div class="icon">📷</div><strong id="loaderTitle">Realidad aumentada</strong><p id="loaderText">Pulsa “Activar cámara” para permitir el acceso a la cámara y comenzar a leer el marcador Hiro.</p><button class="activate" id="activateBtn">📷 Activar cámara</button></div></div>
+<div class="status" id="status">🔎 Buscando marcador Hiro…</div>
+<script>
+const loader=document.getElementById('loader'), title=document.getElementById('loaderTitle'), text=document.getElementById('loaderText'), activate=document.getElementById('activateBtn'), status=document.getElementById('status');
+let started=false;
+function hideLoader(){loader.classList.add('hide')}
+function showError(msg){title.textContent='No se pudo activar la cámara';text.textContent=msg;text.classList.add('error');activate.textContent='↻ Intentar de nuevo';activate.disabled=false;loader.classList.remove('hide')}
+function startAR(){
+ if(started)return; started=true; activate.disabled=true; title.textContent='Cargando realidad aumentada…'; text.classList.remove('error'); text.textContent='Apunta la cámara al marcador Hiro.';
+ const af=document.createElement('script'); af.src='https://aframe.io/releases/1.6.0/aframe.min.js'; af.onload=()=>{
+   const ar=document.createElement('script'); ar.src='https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar.js'; ar.onload=buildScene; ar.onerror=()=>showError('No se pudo cargar AR.js 3.4.7. Comprueba tu conexión a internet.'); document.head.appendChild(ar);
+ }; af.onerror=()=>showError('No se pudo cargar A-Frame 1.6.0. Comprueba tu conexión a internet.'); document.head.appendChild(af);
+}
+function buildScene(){
+ const scene=document.createElement('a-scene'); scene.setAttribute('embedded',''); scene.setAttribute('vr-mode-ui','enabled: false'); scene.setAttribute('renderer','antialias: true; alpha: true; precision: medium;'); scene.setAttribute('arjs','trackingMethod: best; sourceType: webcam; debugUIEnabled: false;');
+ scene.innerHTML=`<a-marker id="hiroMarker" preset="hiro" emitevents="true" smooth="true" smoothCount="5" smoothTolerance="0.01" smoothThreshold="5">
+ <a-entity position="0 0 0"><a-box position="0 0.75 0" width="1.8" height="1.05" depth="0.12" color="#6c5ce7" animation="property: rotation; to: 0 360 0; loop: true; dur: 8000"></a-box><a-box position="0 0.16 0" width="0.13" height="0.48" depth="0.13" color="#343c62"></a-box><a-box position="0 -0.13 0" width="0.9" height="0.08" depth="0.38" color="#343c62"></a-box><a-text value="MONITOR" align="center" color="#ffffff" width="3" position="0 0.76 0.08"></a-text></a-entity></a-marker><a-entity camera></a-entity>`;
+ document.body.appendChild(scene); scene.addEventListener('loaded',()=>setTimeout(hideLoader,800));
+ const marker=document.getElementById('hiroMarker'); marker.addEventListener('markerFound',()=>{status.textContent='✅ Marcador encontrado';status.classList.add('found')}); marker.addEventListener('markerLost',()=>{status.textContent='🔎 Buscando marcador Hiro…';status.classList.remove('found')});
+}
+async function requestAndStart(){
+ if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){showError('La cámara requiere HTTPS o localhost.');return}
+ activate.disabled=true; title.textContent='Solicitando permiso…'; text.textContent='Cuando el navegador lo pregunte, elige “Permitir”.'; text.classList.remove('error');
+ try{const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false}); stream.getTracks().forEach(t=>t.stop()); startAR();}
+ catch(e){started=false;if(e.name==='NotAllowedError')showError('El permiso de cámara fue rechazado. Permite la cámara en la configuración del sitio y vuelve a intentarlo.');else showError('No se pudo acceder a la cámara. Revisa el permiso del navegador.');}
+}
+activate.addEventListener('click',requestAndStart);
+// Si se llega desde el botón principal, el permiso ya fue solicitado allí.
+if(new URLSearchParams(location.search).get('camera')==='ready') startAR();
+document.getElementById('exitBtn').addEventListener('click',()=>{document.querySelectorAll('video').forEach(v=>{if(v.srcObject)v.srcObject.getTracks().forEach(t=>t.stop())});location.href='index.html#experiencias'});
+</script>
+</body></html>

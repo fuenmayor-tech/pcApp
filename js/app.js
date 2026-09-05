@@ -20,8 +20,28 @@ document.addEventListener("DOMContentLoaded",()=>{
   });
 
   document.getElementById("nextClassBtn").addEventListener("click",nextClassification);
-  document.getElementById("startArBtn").addEventListener("click",startAR);
-  document.getElementById("stopArBtn").addEventListener("click",stopAR);
+  const arStart=document.getElementById("startArBtn");
+  if(arStart) arStart.addEventListener("click", async ()=>{
+    if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      showToast("La cámara requiere HTTPS o localhost.");
+      return;
+    }
+    arStart.disabled=true;
+    arStart.textContent="📷 Solicitando permiso…";
+    try{
+      const stream=await navigator.mediaDevices.getUserMedia({
+        video:{facingMode:{ideal:"environment"}},
+        audio:false
+      });
+      stream.getTracks().forEach(track=>track.stop());
+      window.location.href="ar.html?camera=ready";
+    }catch(err){
+      arStart.disabled=false;
+      arStart.textContent="📷 Abrir cámara AR";
+      if(err && err.name==="NotAllowedError") showToast("Debes permitir el acceso a la cámara para usar la realidad aumentada.");
+      else showToast("No se pudo activar la cámara. Revisa el permiso del navegador.");
+    }
+  });
 
   document.querySelectorAll(".experience-tab").forEach(tab=>tab.addEventListener("click",()=>{
     document.querySelectorAll(".experience-tab").forEach(t=>t.classList.remove("active"));
