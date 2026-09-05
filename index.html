@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#6c5ce7">
+  <meta name="description" content="Laboratorio Interactivo del Computador: conceptos, clasificación, quiz, AR y VR.">
+  <title>CompuLab 360 | Partes del computador</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- A-Frame 1.6.0 -->
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <!-- AR.js 3.4.7 para A-Frame / marcador -->
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/three.js/build/ar-threex.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/aframe/build/aframe-ar.js"></script>
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="#inicio" aria-label="Ir al inicio">
+      <span class="brand-icon">⌘</span>
+      <span>Compu<span>Lab</span> 360</span>
+    </a>
+    <nav class="desktop-nav" aria-label="Navegación principal">
+      <a href="#conceptos">Conceptos</a>
+      <a href="#clasifica">Clasifica</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#experiencias">3D / AR</a>
+    </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="Abrir menú">☰</button>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#conceptos">📚 Conceptos</a>
+    <a href="#clasifica">🧩 Clasifica</a>
+    <a href="#quiz">🧠 Quiz</a>
+    <a href="#experiencias">🥽 3D / AR</a>
+  </div>
+
+  <main>
+    <section id="inicio" class="hero section-shell">
+      <div class="hero-copy">
+        <div class="eyebrow">LABORATORIO DIGITAL • APRENDE JUGANDO</div>
+        <h1>Descubre cómo<br><span>funciona un computador.</span></h1>
+        <p>
+          Explora sus partes, descubre para qué sirve cada una,
+          clasifícalas, supera el reto de preguntas y llévalas a
+          la realidad aumentada.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#conceptos">🚀 Comenzar</a>
+          <a class="btn btn-soft" href="#experiencias">✨ Explorar 3D</a>
+        </div>
+        <div class="hero-stats">
+          <div><strong>10+</strong><span>componentes</span></div>
+          <div><strong>3</strong><span>retos</span></div>
+          <div><strong>AR</strong><span>con marcador</span></div>
+        </div>
+      </div>
+      <div class="hero-art" aria-label="Ilustración de computador">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="computer-illustration">
+          <div class="monitor">
+            <div class="screen">
+              <div class="screen-code">
+                <i></i><i></i><i></i><i></i>
+                <b></b><b></b><b></b>
+              </div>
+            </div>
+            <div class="monitor-stand"></div>
+            <div class="monitor-base"></div>
+          </div>
+          <div class="tower">
+            <div class="tower-light"></div>
+            <div class="tower-slot"></div>
+            <div class="tower-port"></div>
+          </div>
+          <div class="keyboard"></div>
+          <div class="mouse"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="conceptos" class="content-section section-shell">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">01 • CONOCE</span>
+          <h2>Las partes del computador</h2>
+          <p>Selecciona una tarjeta para conocer su función y categoría.</p>
+        </div>
+        <div class="filter-row" id="categoryFilters">
+          <button class="filter active" data-filter="all">Todos</button>
+          <button class="filter" data-filter="entrada">Entrada</button>
+          <button class="filter" data-filter="salida">Salida</button>
+          <button class="filter" data-filter="procesamiento">Procesamiento</button>
+          <button class="filter" data-filter="almacenamiento">Almacenamiento</button>
+        </div>
+      </div>
+      <div class="concept-grid" id="conceptGrid"></div>
+    </section>
+
+    <section id="clasifica" class="content-section alt-section">
+      <div class="section-shell">
+        <div class="section-heading centered">
+          <span class="section-kicker">02 • PON A PRUEBA</span>
+          <h2>¿Dónde pertenece?</h2>
+          <p>Lee el componente y elige la categoría que corresponda.</p>
+        </div>
+        <div class="classification-card">
+          <div class="classification-progress">
+            <span id="classProgressText">Reto 1 de 8</span>
+            <div class="progress"><div id="classProgress" class="progress-fill"></div></div>
+          </div>
+          <div id="classificationQuestion" class="class-question"></div>
+          <div class="class-options" id="classificationOptions"></div>
+          <div id="classificationFeedback" class="feedback" role="status"></div>
+          <button id="nextClassBtn" class="btn btn-primary hidden">Siguiente →</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="quiz" class="content-section section-shell">
+      <div class="section-heading centered">
+        <span class="section-kicker">03 • DESAFÍO</span>
+        <h2>Quiz del explorador</h2>
+        <p>Demuestra cuánto aprendiste. ¡Cada respuesta cuenta!</p>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-top">
+          <span id="quizCounter">Pregunta 1 de 10</span>
+          <span id="quizScore">⭐ 0 puntos</span>
+        </div>
+        <div class="progress"><div id="quizProgress" class="progress-fill"></div></div>
+        <div id="quizContent"></div>
+      </div>
+    </section>
+
+    <section id="experiencias" class="content-section dark-section">
+      <div class="section-shell">
+        <div class="section-heading centered light">
+          <span class="section-kicker">04 • EXPLORA</span>
+          <h2>Entra al laboratorio inmersivo</h2>
+          <p>Explora un computador en 3D o activa la cámara para llevar un componente al mundo real.</p>
+        </div>
+
+        <div class="experience-tabs">
+          <button class="experience-tab active" data-panel="vrPanel">🥽 Laboratorio 3D / VR</button>
+          <button class="experience-tab" data-panel="arPanel">📱 Realidad aumentada</button>
+        </div>
+
+        <div class="experience-panel active" id="vrPanel">
+          <div class="vr-copy">
+            <span class="pill">A-FRAME 1.6.0 • WEBXR</span>
+            <h3>Explora el computador en 3D</h3>
+            <p>
+              Arrastra para mirar alrededor y usa los botones para inspeccionar
+              cada componente. En dispositivos compatibles, pulsa el botón de
+              entrada a VR de A-Frame.
+            </p>
+            <div class="vr-controls">
+              <button class="component-control active" data-component="monitor">🖥️ Monitor</button>
+              <button class="component-control" data-component="keyboard">⌨️ Teclado</button>
+              <button class="component-control" data-component="mouse">🖱️ Mouse</button>
+              <button class="component-control" data-component="tower">🖥️ CPU / Gabinete</button>
+            </div>
+            <div id="vrInfo" class="vr-info">
+              <strong>Monitor</strong>
+              <span>Dispositivo de salida que muestra información visual.</span>
+            </div>
+          </div>
+          <div class="scene-wrap">
+            <a-scene
+              id="vrScene"
+              embedded
+              vr-mode-ui="enabled: true"
+              renderer="colorManagement: true; physicallyCorrectLights: true"
+              background="color: #10152e">
+              <a-entity light="type: ambient; intensity: 1.5"></a-entity>
+              <a-entity light="type: directional; intensity: 2" position="-3 5 4"></a-entity>
+              <a-entity id="labRig" position="0 0 -5">
+                <a-entity id="vrMonitor" position="0 1.55 0" class="vr-clickable" data-name="Monitor">
+                  <a-box width="3.6" height="2.15" depth="0.18" color="#222b4f" radius="0.08"></a-box>
+                  <a-box position="0 0 0.11" width="3.25" height="1.8" depth="0.05" color="#7c6ff2"></a-box>
+                  <a-box position="0 -1.35 0" width="0.22" height="0.75" depth="0.22" color="#343c62"></a-box>
+                  <a-box position="0 -1.75 0" width="1.2" height="0.12" depth="0.6" color="#343c62"></a-box>
+                </a-entity>
+                <a-entity id="vrKeyboard" position="0 -0.25 0.45" rotation="-8 0 0" class="vr-clickable" data-name="Teclado">
+                  <a-box width="3.5" height="0.15" depth="1.15" color="#dfe4f5"></a-box>
+                  <a-entity id="keyRows"></a-entity>
+                </a-entity>
+                <a-entity id="vrMouse" position="2 -0.2 0.55" class="vr-clickable" data-name="Mouse">
+                  <a-sphere scale="0.45 0.25 0.6" color="#e9ecf7"></a-sphere>
+                  <a-box position="0 0.13 0" width="0.04" height="0.12" depth="0.18" color="#6c5ce7"></a-box>
+                </a-entity>
+                <a-entity id="vrTower" position="-2.35 0.1 0" class="vr-clickable" data-name="CPU / Gabinete">
+                  <a-box width="1.35" height="2.8" depth="1.4" color="#252c48"></a-box>
+                  <a-cylinder position="0 0.65 0.73" rotation="90 0 0" radius="0.22" height="0.03" color="#6c5ce7"></a-cylinder>
+                  <a-box position="0 -0.15 0.73" width="0.65" height="0.06" depth="0.03" color="#8d9abc"></a-box>
+                </a-entity>
+                <a-plane position="0 -1.7 0" rotation="-90 0 0" width="10" height="8" color="#171d38"></a-plane>
+              </a-entity>
+              <a-camera position="0 0.7 0" look-controls wasd-controls></a-camera>
+            </a-scene>
+          </div>
+        </div>
+
+        <div class="experience-panel" id="arPanel">
+          <div class="ar-copy">
+            <span class="pill">AR.JS 3.4.7 • MARCADOR HIRO</span>
+            <h3>Apunta al marcador y descubre una pieza</h3>
+            <p>
+              Imprime o abre el marcador Hiro en otra pantalla. Después pulsa
+              <strong>Activar cámara</strong>, acepta el permiso y apunta la cámara
+              al marcador. El componente 3D aparecerá sobre él.
+            </p>
+            <div class="ar-steps">
+              <div><b>1</b><span>Activa la cámara</span></div>
+              <div><b>2</b><span>Acepta el permiso</span></div>
+              <div><b>3</b><span>Enfoca el marcador</span></div>
+            </div>
+            <button id="startArBtn" class="btn btn-primary">📷 Activar cámara</button>
+            <button id="stopArBtn" class="btn btn-soft hidden">✕ Cerrar cámara</button>
+            <p class="camera-note">La RA requiere HTTPS o un entorno local seguro. GitHub Pages funciona con HTTPS.</p>
+          </div>
+
+          <div class="ar-stage" id="arStage">
+            <div id="arPlaceholder" class="ar-placeholder">
+              <div class="marker-icon">◎</div>
+              <h4>Experiencia AR lista</h4>
+              <p>La cámara aparecerá aquí cuando la actives.</p>
+            </div>
+            <div id="arContainer" class="ar-container hidden"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="progress-section section-shell">
+      <div class="achievement-card">
+        <div>
+          <span class="section-kicker">TU PROGRESO</span>
+          <h2>¡Sigue explorando!</h2>
+          <p id="achievementText">Completa los retos para desbloquear tu insignia.</p>
+        </div>
+        <div class="achievement-badge" id="achievementBadge">🏆</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="section-shell footer-inner">
+      <div><strong>CompuLab 360</strong><span>Laboratorio interactivo del computador</span></div>
+      <span>HTML5 • CSS3 • JavaScript • A-Frame 1.6.0 • AR.js 3.4.7</span>
+    </div>
+  </footer>
+
+  <div class="modal hidden" id="conceptModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose" aria-label="Cerrar">×</button>
+      <div id="modalIcon" class="modal-icon">🖥️</div>
+      <span id="modalCategory" class="pill"></span>
+      <h3 id="modalTitle"></h3>
+      <p id="modalDescription"></p>
+      <div class="modal-function"><strong>¿Para qué sirve?</strong><span id="modalFunction"></span></div>
+      <div class="modal-tip">💡 <span id="modalTip"></span></div>
+      <button id="speakBtn" class="btn btn-soft">🔊 Escuchar explicación</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="js/concepts.js"></script>
+  <script src="js/classification.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/vr.js"></script>
+  <script src="js/ar.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
